@@ -1,30 +1,30 @@
 const { sequelize } = require('../database/conn');
-const { DataTypes} = require('sequalize');
+const { DataTypes} = require('sequelize');
 
 const User = sequelize.define('users', {
     name: {
-        type: DataTypes.String,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     email: {
-        type: DataTypes.String,
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true
     },
     password: {
-        type: DataTypes.String,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     avatar: {
-        type: DataTypes.String,
+        type: DataTypes.STRING,
         allowNull: true,
     },
     date: {
         type: DataTypes.DATE,
-        defaultValue: Sequelize.fn('now')
+        defaultValue: sequelize.fn('now')
     }
 });
 
-await User.sync({ alter: true });
+User.sync({ alter: true });
 
 module.exports = { User };
