@@ -8,6 +8,7 @@ const {Education} = require('../../models/Education')
 const {User} = require('../../models/User')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const request = require('request');
 const { check, validationResult } = require('express-validator');
 
 // start GET profile
@@ -48,6 +49,29 @@ router.get('/user/:user_id', async(req, res) => {
         res.status(500).send('server error');
     }
 });
+
+router.get('/github/:username', async(req, res) => {
+    try {
+        const options = {
+            uri: `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc&client_id=${process.env.GIT_CLIENT_ID}&client_secret=${process.env.GIT_CLIENT_SECRET}`,
+            method: "GET",
+            headers: { 'user-agent': 'node.js' }
+        }
+
+        request(options, (error, response, body) => {
+            if(error) {
+                console.error(error);
+            }
+            if(response.statusCode !== 200) {
+                return res.status(404).json({ msg: 'No Github profile found'})
+            }
+            res.json(JSON.parse(body))
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+})
 // end GET profile
 
 // start POST profile
