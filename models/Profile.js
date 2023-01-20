@@ -42,12 +42,6 @@ const Profile = sequelize.define('profile', {
   },
 });
 
-// Profile.hasMany(User, {
-//   foreignKey: 'id',
-//   targetKey: 'userId',
-//   as: 'user'
-// });
-
 Profile.belongsTo(User, {
   foreignKey: 'userId',
   targetKey: 'id',

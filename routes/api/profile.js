@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../../middleware/auth')
 const {Profile} = require('../../models/Profile')
 const {Social} = require('../../models/Social')
+const {Experience} = require('../../models/Experience')
 const {User} = require('../../models/User')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -118,6 +119,57 @@ router.post('/', [auth, [
 });
 // end POST profile
 
+// start UPDATE profile
+router.put('/experience', [auth, [
+    check('title', 'Title is required.').not().isEmpty(),
+    check('company', 'Company is required.').not().isEmpty(),
+    check('from', 'From date is required.').not().isEmpty(),
+]], async(req, res) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+        title, 
+        company, 
+        location, 
+        from, 
+        to, 
+        current,
+        description
+    } = req.body;
+
+    const newExp = {
+        title: title,
+        company: company, 
+        location: location, 
+        from: from, 
+        to: to,
+        current: current,
+        description: description
+    }
+
+    try {
+        const profile = await Profile.findOne({ where: { userId: req.user.id }});
+        newExp.profileId = profile.id;
+
+        let experience = await Experience.findOne({ where: { profileId : profile.id} });
+
+        if(experience) {
+            experience.update(newExp, { where: { profileId:  profile.id, returning: true, upsert: true } });
+        } else {
+            experience = new Experience(newExp);
+            await experience.save();
+        }
+
+        res.json({profile, experience});
+    } catch(err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+// end UPDATE profile
 
 // start DELETE profile
 router.delete('/', auth, async(req, res) => {
