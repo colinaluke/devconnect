@@ -2,9 +2,19 @@ const Sequelize = require('sequelize');
 
 const { DB_HOST, DB_NAME, DB_USER_NAME, DB_USER} = process.env;
 
+const opts = {
+    define: {
+        //prevent sequelize from pluralizing table names
+        freezeTableName: true
+    }
+}
+
 const sequelize = new Sequelize(DB_NAME, DB_USER_NAME, '', {
     host: DB_HOST,
-    dialect: DB_USER
+    dialect: DB_USER,
+    define: {
+        freezeTableName: true
+    }
 });
 
 async function connDb() {

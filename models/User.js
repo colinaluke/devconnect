@@ -1,7 +1,7 @@
 const { sequelize } = require('../database/conn');
 const { DataTypes} = require('sequelize');
 
-const User = sequelize.define('users', {
+const User = sequelize.define('user', {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -22,9 +22,15 @@ const User = sequelize.define('users', {
     date: {
         type: DataTypes.DATE,
         defaultValue: sequelize.fn('now')
+    },
+    profileId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'profile',
+            key: 'id'
+        }
     }
-});
+  });
 
-User.sync({ alter: true });
-
-module.exports = { User };
+  User.sync({ alter: true });
+  module.exports = { User };
