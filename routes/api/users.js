@@ -73,6 +73,6 @@ router.post('/', [
         return res.status(500).send('Server error');
     }
 });
-
+// End POST user
 
 module.exports = router;
