@@ -6,8 +6,6 @@ const {Social} = require('../../models/Social')
 const {Experience} = require('../../models/Experience')
 const {Education} = require('../../models/Education')
 const {User} = require('../../models/User')
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const request = require('request');
 const { check, validationResult } = require('express-validator');
 
