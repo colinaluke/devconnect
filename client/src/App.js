@@ -5,8 +5,6 @@ import Landing from './components/layout/Landing'
 import Login from './components/auth/Login'
 import Register from './components/auth/Register'
 
-
-
 const App = () => {
   return (
     <Router>
