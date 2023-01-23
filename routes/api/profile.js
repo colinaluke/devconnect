@@ -7,6 +7,7 @@ const {Social} = require('../../models/Social')
 const {Experience} = require('../../models/Experience')
 const {Education} = require('../../models/Education')
 const {User} = require('../../models/User')
+const {Post} = require('../../models/Post')
 const request = require('request');
 const { check, validationResult } = require('express-validator');
 
@@ -19,7 +20,16 @@ router.get('/me', auth, async (req, res) => {
                 { model: User, as: 'user', attributes: ['name', 'avatar']}, 
                 { model: Social, as: 'social', 
                     where: { profileId: Sequelize.col('profile.id')},
-                    attributes: ['youtube', 'twitter', 'facebook', 'linkedin', 'instagram']
+                    attributes: ['youtube', 'twitter', 'facebook', 'linkedin', 'instagram'],
+                    required: false
+                },
+                { model: Experience, as: 'experience', 
+                    where: { profileId: Sequelize.col('profile.id')},
+                    required: false
+                },
+                { model: Education, as: 'education', 
+                    where: { profileId: Sequelize.col('profile.id')},
+                    required: false
                 }
             ]
         });
@@ -258,6 +268,10 @@ router.put('/education', [auth, [
 // start DELETE profile
 router.delete('/', auth, async(req, res) => {
     try{
+        await Post.destroy({
+            where: {userId: req.user.id}
+        })
+
         await Profile.destroy({ 
             where: {userId: req.user.id },
             include: [{
