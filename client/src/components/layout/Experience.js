@@ -44,7 +44,7 @@ const Experience = ({ experience, deleteExperience }) => {
 
 Experience.propTypes = {
     experience: PropTypes.array.isRequired,
-    deleteEducation: PropTypes.func.isRequired
+    deleteEducation: PropTypes.func
 }
 
 export default connect(null, { deleteExperience })(Experience)

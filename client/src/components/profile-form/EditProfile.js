@@ -57,11 +57,11 @@ const EditProfile = ({ profile: { profile, loading }, createProfile, getCurrentP
             skills: loading || !profile.skills? '' : profile.skills,
             githubusername: loading || !profile.githubusername? '' : profile.githubusername,
             bio: loading || !profile.bio? '' : profile.bio,
-            twitter: loading || !profile.social[0].twitter? '' : profile.social[0].twitter,
-            facebook: loading || !profile.social[0].facebook? '' : profile.social[0].facebook,
-            linkedin: loading || !profile.social[0].linkedin? '' : profile.social[0].linkedin,
-            youtube: loading || !profile.social[0].youtube? '' : profile.social[0].youtube,
-            instagram: loading || !profile.social[0].instagram? '' : profile.social[0].instagram,
+            twitter: loading || !profile.social || !profile.social[0].twitter? '' : profile.social[0].twitter,
+            facebook: loading || !profile.social  || !profile.social[0].facebook? '' : profile.social[0].facebook,
+            linkedin: loading || !profile.social || !profile.social[0].linkedin? '' : profile.social[0].linkedin,
+            youtube: loading || !profile.social  || !profile.social[0].youtube? '' : profile.social[0].youtube,
+            instagram: loading || !profile.social  || !profile.social[0].instagram? '' : profile.social[0].instagram,
         })
     }, [loading, getCurrentProfile])
     
