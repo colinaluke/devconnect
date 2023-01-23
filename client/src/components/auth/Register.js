@@ -16,6 +16,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
     const { name, email, password, password2} = formData 
 
     const formHandler = e => setFormData({...formData, [e.target.name]: e.target.value})
+    
     const submitHandler = (e) => {
         e.preventDefault()
 
