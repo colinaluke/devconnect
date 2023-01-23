@@ -47,7 +47,7 @@ router.get('/me', auth, async (req, res) => {
 
 router.get('/', async (req, res) => {
     try{
-        const profiles = await Profile.findAll({include: [ { model: User, as: 'user', attributes: ['name', 'avatar']}]});
+        const profiles = await Profile.findAll({include: [ { model: User, as: 'user', attributes: ['id', 'name', 'avatar']}]});
         res.json(profiles); 
     } catch(err) {
         console.error(err.message);
