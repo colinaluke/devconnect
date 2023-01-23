@@ -1,11 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import PropTypes from 'prop-types'
 
-const Dashboard = () => {
+const Dashboard = props => {
   return (
     <div>
-      Dashboard
+      dashboard
     </div>
   )
+}
+
+Dashboard.propTypes = {
+
 }
 
 export default Dashboard
