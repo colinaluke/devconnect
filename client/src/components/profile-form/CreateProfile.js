@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { createProfile } from '../../actions/profile'
+import { Link, useNavigate } from 'react-router-dom'
 
-const CreateProfile = props => {
+const CreateProfile = ({ createProfile }) => {
+    const navigate = useNavigate()
     const [formData, setFormData] = useState({
         company: '',
         website: '',
@@ -40,7 +43,7 @@ const CreateProfile = props => {
     const submitHandler = (e) => {
         e.preventDefault()
 
-       
+       createProfile(formData, navigate)
     }
     
 
@@ -54,7 +57,7 @@ const CreateProfile = props => {
         profile stand out
       </p>
       <small>* = required field</small>
-      <form className="form">
+      <form className="form" onSubmit={e => submitHandler(e)}>
         <div className="form-group">
           <select name="status" value={status} onChange={e => formHandler(e)}>
             <option value="0">* Select Professional Status</option>
@@ -156,7 +159,7 @@ const CreateProfile = props => {
 }
 
 CreateProfile.propTypes = {
-
+    createProfile: PropTypes.func.isRequired
 }
 
-export default connect()(CreateProfile)
+export default connect(null, { createProfile })(CreateProfile)
