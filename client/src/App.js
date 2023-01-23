@@ -8,6 +8,7 @@ import Dashboard from './components/layout/Dashboard';
 import Alert from './components/layout/Alert'
 import PrivateRoute from './components/routing/PrivateRoute'
 import CreateProfile from './components/profile-form/CreateProfile';
+import EditProfile from './components/profile-form/EditProfile';
 import { useEffect } from 'react';
 import { Provider } from 'react-redux'
 import store from './store'
@@ -35,6 +36,7 @@ const App = () => {
               <Route exact path='/register' element={<Register />} />
               <Route path='/dashboard' element={<PrivateRoute><Dashboard /></PrivateRoute> } />
               <Route path='/create-profile' element={<PrivateRoute><CreateProfile /></PrivateRoute> } />
+              <Route path='/edit-profile' element={<PrivateRoute><EditProfile /></PrivateRoute> } />
           </Routes>
         </section>
       </Router>

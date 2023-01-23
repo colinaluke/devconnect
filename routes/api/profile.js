@@ -1,4 +1,5 @@
 const express = require('express');
+const Sequelize = require('sequelize');
 const router = express.Router();
 const auth = require('../../middleware/auth')
 const {Profile} = require('../../models/Profile')
@@ -12,8 +13,17 @@ const { check, validationResult } = require('express-validator');
 // start GET profile
 router.get('/me', auth, async (req, res) => {
     try {
-        const profile = await Profile.findOne({where: { userId: req.user.id }, include: [ { model: User, as: 'user', attributes: ['name', 'avatar']}]});
-
+        let profile = await Profile.findOne({
+            where: { userId: req.user.id }, 
+            include: [ 
+                { model: User, as: 'user', attributes: ['name', 'avatar']}, 
+                { model: Social, as: 'social', 
+                    where: { profileId: Sequelize.col('profile.id')},
+                    attributes: ['youtube', 'twitter', 'facebook', 'linkedin', 'instagram']
+                }
+            ]
+        });
+        
         if(!profile) {
             return res.status(400).json({ msg: 'There is no profile for this user.' });
         }
@@ -248,7 +258,14 @@ router.put('/education', [auth, [
 // start DELETE profile
 router.delete('/', auth, async(req, res) => {
     try{
-        await Profile.destroy({ where: {userId: req.user.id }});
+        await Profile.destroy({ 
+            where: {userId: req.user.id },
+            include: [{
+                model: Social,
+                as: 'social',
+                where: { profileId: Sequelize.col('profile.id') }
+            }]
+        });
         await User.destroy({ where: {id: req.user.id }});
 
         res.json({ msg: "User removed."});
