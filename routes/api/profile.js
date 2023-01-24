@@ -57,7 +57,25 @@ router.get('/', async (req, res) => {
 
 router.get('/user/:user_id', async(req, res) => {
     try{
-        const profile = await Profile.findOne({ where: { userId: req.params.user_id }, include: [ { model: User, as: 'user', attributes: ['name', 'avatar']}]});
+        const profile = await Profile.findOne({ 
+            where: { userId: req.params.user_id }, 
+            include: [ 
+                { model: User, as: 'user', attributes: ['name', 'avatar']},
+                { model: Social, as: 'social', 
+                where: { profileId: Sequelize.col('profile.id')},
+                attributes: ['youtube', 'twitter', 'facebook', 'linkedin', 'instagram'],
+                required: false
+                },
+                { model: Experience, as: 'experience', 
+                    where: { profileId: Sequelize.col('profile.id')},
+                    required: false
+                },
+                { model: Education, as: 'education', 
+                    where: { profileId: Sequelize.col('profile.id')},
+                    required: false
+                }
+            ]
+        });
         if(!profile) {
             return res.status(400).json({ msg: 'Profile not found'});
         }
