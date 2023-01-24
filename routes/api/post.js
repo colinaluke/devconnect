@@ -7,12 +7,22 @@ const {Profile} = require('../../models/Profile')
 const {Post} = require('../../models/Post')
 const {User} = require('../../models/User')
 const {Like} = require('../../models/Like')
-const {Comment} = require('../../models/Comment')
+const {Comment} = require('../../models/Comment');
+const { Sequelize } = require('sequelize');
 
 // start GET posts
 router.get('/', auth, async (req, res) => {
     try{
-        const posts = await Post.findAll({ order: [ ['date', 'DESC'] ] });
+        const posts = await Post.findAll({ 
+            order: [ ['date', 'DESC'] ], 
+            include: [
+                { model: Like, as: 'like', 
+                    where: { postId: Sequelize.col('Post.id')},
+                    required: false},
+                { model: Comment, as: 'comment', 
+                where: { postId: Sequelize.col('Post.id')},
+                required: false},  
+            ] });
         res.json(posts); 
     } catch(err) {
         console.error(err.message);
@@ -22,7 +32,17 @@ router.get('/', auth, async (req, res) => {
 
 router.get('/:id', auth, async (req, res) => {
     try{
-        const post = await Post.findByPk(req.params.id);
+        const post = await Post.findOne({ 
+            where: { id: req.params.id},
+            include: [
+                { model: Like, as: 'like', 
+                    where: { postId: Sequelize.col('Post.id')},
+                    required: false},
+                { model: Comment, as: 'comment', 
+                where: { postId: Sequelize.col('Post.id')},
+                required: false},  
+            ]
+        });
         if(!post) {
             return res.status(404).json({ msg: "Post not found"});
         }
@@ -55,7 +75,18 @@ router.post('/', [auth, [
         
         const post = new Post(newPost);
         await post.save();
-        res.json(post);
+
+        const ret = {
+            id: post.id,
+            text : req.body.text,
+            name : user.name, 
+            avatar: user.avatar, 
+            userId: req.user.id,   
+            date: post.date,
+            like: [],
+            comment: []
+        }
+        res.json(ret);
     } catch (err) {
         console.error(err.message)
         return res.status(500).json({ msg: 'Server error' });
@@ -127,14 +158,14 @@ router.delete('/:id', auth, async(req, res) => {
 router.delete('/unlike/:id', auth, async(req, res) => {
     try{
         const like = await Like.findOne({where: {postId: req.params.id }})
-        if(!like) {
+        if(!like) { 
             return res.status(404).json({ msg: "Post is not liked"});
         }
         if(like.userId !== req.user.id) {
             return res.status(401).json({ msg: "User not authorized"});
         } else {
             await Like.destroy({ where: {postId: req.params.id }});
-            res.json({ msg: "Post unliked."});
+            res.json({ id: like.id, msg: "Post unliked."});
         }
     }catch(err) {
         console.error(err.message)

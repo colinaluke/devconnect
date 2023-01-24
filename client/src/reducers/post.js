@@ -1,5 +1,5 @@
 import {
-    GET_POSTS, POST_ERROR, UPDATE_LIKES, DELETE_POST
+    GET_POSTS, POST_ERROR, UPDATE_LIKES, DELETE_POST, ADD_POST, REMOVE_LIKES, GET_POST, ADD_COMMENT, REMOVE_COMMENT
 } from '../actions/constants'
 
 const initialState = {
@@ -19,6 +19,18 @@ const post = (state = initialState, action) => {
                 posts: payload,
                 loading: false
             }
+        case GET_POST:
+            return {
+                ...state, 
+                post: payload, 
+                loading: false
+            }
+        case ADD_POST:
+            return {
+                ...state, 
+                posts: [payload, ...state.posts],
+                loading: false
+            }
         case POST_ERROR:
             return {
                 ...state,
@@ -30,15 +42,36 @@ const post = (state = initialState, action) => {
                 ...state, 
                 posts: state.posts.map(post => (
                     post.id === payload.id 
-                        ? { ...post, likes: payload.likes }
+                        ? { ...post, like: [...post.like, payload.likes] }
                         : post
                 )),
                 loading: false
+            }
+        case REMOVE_LIKES:
+            return {
+                ...state,
+                posts: state.posts.map(post => (
+                    post.id === payload.id
+                        ? { ...post, like: post.like.filter(like => like.id !== payload.likes)}
+                        : post
+                ))
             }
         case DELETE_POST: 
             return {
                 ...state, 
                 posts: state.posts.filter(post => post.id !== payload),
+                loading: false
+            }
+        case ADD_COMMENT:
+            return {
+                ...state, 
+                post: { ...state.post, comment: [payload, ...state.post.comment] },
+                loading: false
+            }
+        case REMOVE_COMMENT:
+            return {
+                ...state, 
+                post: { ...state.post, comment: state.post.comment.filter(comment => comment.id !== payload)},
                 loading: false
             }
         default: 

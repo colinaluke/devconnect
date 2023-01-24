@@ -1,24 +1,25 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import Moment from 'react-moment'
 import { connect } from 'react-redux'
 import { addLike, removeLike, deletePost } from '../../actions/post'
 
-const PostItem = ({ addLike, removeLike, deletePost, auth, post: {
-    id, text, name, avatar, user, likes, comments, date
+const PostItem = ({ addLike, removeLike, deletePost, showActions, auth, post: {
+    id, text, name, avatar, userId, like, comment, date
 }}) => {
+
   return (
     <div className="post bg-white p-1 my-1">
           <div>
-            <a href="profile.html">
+            <Link to={`/profile/${userId}`}>
               <img
                 className="round-img"
                 src={avatar}
                 alt=""
               />
               <h4>{name}</h4>
-            </a>
+            </Link>
           </div>
           <div>
             <p className="my-1">
@@ -27,29 +28,38 @@ const PostItem = ({ addLike, removeLike, deletePost, auth, post: {
              <p className="post-date">
                 Posted on <Moment format='YYYY/MM/DD'>{date}</Moment>
             </p>
-            <button type='button' className="btn btn-light" onClick={e => addLike(id)}>
+
+            {showActions && (
+            <>
+              <button type='button' className="btn btn-light" onClick={e => addLike(id)}>
                 <i className="fas fa-thumbs-up"></i>
-                <span>{likes.length}</span>
-            </button>
-            <button type='button' className="btn btn-light" onClick={e => removeLike(id)}>
-                <i className="fas fa-thumbs-down"></i> {' '}
-                <span>{likes.length > 0 && (
-                    <span>{likes.length}</span>
+                <span>{like.length > 0 && (
+                  <span>{like.length}</span>
                 )}</span>
-            </button>
-            <Link to={`/post/id`} className='btn btn-primary'>
-                Discussion {comments.length > 0 && (
-                    <span className='comment-count'>{comments.length}</span>
-                )} 
-            </Link>
-            {!auth.loading && user === user.auth.id && (
-                <button type="button" className="btn btn-danger" onClick={e => deletePost(id)}>
-                    <i className="fas fa-times"></i>
-                </button>
-            )}
+              </button>
+              <button type='button' className="btn btn-light" onClick={e => removeLike(id)}>
+                  <i className="fas fa-thumbs-down"></i> {' '}
+              </button>
+              <Link to={`/posts/${id}`} className='btn btn-primary'>
+                  Discussion {comment.length > 0 && (
+                      <span className='comment-count'>{comment.length}</span>
+                  )} 
+              </Link>
+              {!auth.loading && userId === auth.user.id && (
+                  <button type="button" className="btn btn-danger" onClick={e => deletePost(id)}>
+                      <i className="fas fa-times"></i>
+                  </button>
+              )}
+            </>)}
+
+
           </div>
         </div>
   )
+}
+
+PostItem.defaultProps = {
+  showActions: true
 }
 
 PostItem.propTypes = {
@@ -61,9 +71,6 @@ PostItem.propTypes = {
 
 const mapStateToProps = state => ({
     auth: state.auth,
-    addLike: PropTypes.func.isRequired,
-    removeLike: PropTypes.func.isRequired,
-    deletePost: PropTypes.func.isRequired
 })
 
 export default connect(mapStateToProps, { addLike, removeLike, deletePost })(PostItem)
