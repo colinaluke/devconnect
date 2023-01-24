@@ -34,10 +34,12 @@ const App = () => {
     <Provider store = { store }>
       <Router>
         <Navbar />
+        <Routes>
+          <Route exact path='/' element={<Landing />} />
+        </Routes>
         <section className="container">
           <Alert />
           <Routes>
-              <Route exact path='/' element={<Landing />} />
               <Route exact path='/login' element={<Login />} />
               <Route exact path='/register' element={<Register />} />
               <Route exact path='/profiles' element={<Profiles />} />
