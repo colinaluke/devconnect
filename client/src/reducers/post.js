@@ -1,5 +1,5 @@
 import {
-    GET_POSTS, POST_ERROR
+    GET_POSTS, POST_ERROR, UPDATE_LIKES, DELETE_POST
 } from '../actions/constants'
 
 const initialState = {
@@ -23,6 +23,22 @@ const post = (state = initialState, action) => {
             return {
                 ...state,
                 error: payload, 
+                loading: false
+            }
+        case UPDATE_LIKES:
+            return {
+                ...state, 
+                posts: state.posts.map(post => (
+                    post.id === payload.id 
+                        ? { ...post, likes: payload.likes }
+                        : post
+                )),
+                loading: false
+            }
+        case DELETE_POST: 
+            return {
+                ...state, 
+                posts: state.posts.filter(post => post.id !== payload),
                 loading: false
             }
         default: 
